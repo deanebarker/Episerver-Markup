@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Markup.Core</RootNamespace>
-    <AssemblyName>Markup.Core</AssemblyName>
+    <AssemblyName>Markup</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,14 +30,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EPiServer">
-      <HintPath>..\..\Demo2\Demo2\bin\EPiServer.dll</HintPath>
+    <Reference Include="EPiServer, Version=10.10.3.0, Culture=neutral, PublicKeyToken=8fe83dea738b45b7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\refs\EPiServer.dll</HintPath>
     </Reference>
-    <Reference Include="EPiServer.Data">
-      <HintPath>..\..\Demo2\Demo2\bin\EPiServer.Data.dll</HintPath>
+    <Reference Include="EPiServer.Data, Version=10.10.3.0, Culture=neutral, PublicKeyToken=8fe83dea738b45b7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\refs\EPiServer.Data.dll</HintPath>
     </Reference>
-    <Reference Include="EPiServer.Framework">
-      <HintPath>..\..\Demo2\Demo2\bin\EPiServer.Framework.dll</HintPath>
+    <Reference Include="EPiServer.Framework, Version=10.10.3.0, Culture=neutral, PublicKeyToken=8fe83dea738b45b7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\refs\EPiServer.Framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -58,6 +61,7 @@
     <Compile Include="Markup\Controllers\MarkupFileController.cs" />
     <Compile Include="Markup\MarkupArchiveResourceHandler.cs" />
     <Compile Include="Markup\MarkupInit.cs" />
+    <Compile Include="Markup\MarkupSettings.cs" />
     <Compile Include="Markup\Models\MarkupArchiveFile.cs" />
     <Compile Include="Markup\Models\MarkupFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,34 +1,37 @@
-﻿using EPiServer.Core;
-using EPiServer.DataAbstraction;
+﻿using EPiServer.DataAbstraction;
 using EPiServer.DataAnnotations;
 using EPiServer.Framework.Blobs;
 using EPiServer.Framework.DataAnnotations;
-using EPiServer.ServiceLocation;
 using System;
-using System.Linq;
-using System.ComponentModel.DataAnnotations;
-using System.IO.Compression;
-using System.IO;
 using System.Collections.Generic;
-using EPiServer.Framework;
-using EPiServer.Framework.Initialization;
-using System.Web;
-using EPiServer;
-using System.Web.Routing;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
 using System.Text;
 
 namespace Markup.Models
 {
-    [ContentType(GUID = "FE3BD195-7CB0-4756-AB5F-E5E223CD9831")]
-    [MediaDescriptor(ExtensionString = "app,htmla")]
+    [ContentType(DisplayName = "Markup Archive File", GUID = "FE3BD195-7CB0-4756-AB5F-E5E223CD9831")]
+    [MediaDescriptor(ExtensionString = "app")]
     public class MarkupArchiveFile : MarkupFile
     {
         public override string Markup
         {
             get
             {
-                var name = Path.GetFileNameWithoutExtension(Name);
-                return ExtractHtml(GetTextContent(string.Concat(name, ".html")));
+                // I know there's a more graceful to do this...
+                var baseName = Path.GetFileNameWithoutExtension(Name);
+                foreach (var file in GetFiles())
+                {
+                    foreach (var extension in MarkupSettings.MarkupExtensions)
+                    {
+                        if (file.ToLower() == string.Concat(baseName, extension))
+                        {
+                            return ExtractMarkup(GetTextContent(file));
+                        }
+                    }
+                }
+                return string.Empty;
             }
         }
 

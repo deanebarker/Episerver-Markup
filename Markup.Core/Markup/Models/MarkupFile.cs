@@ -12,35 +12,30 @@ using EPiServer.Framework.Web.Resources;
 
 namespace Markup.Models
 {
-    [ContentType(GUID = "EE3BD195-7CB0-4756-AB5F-E5E223CD9831")]
+    [ContentType(DisplayName = "Markup File", GUID = "EE3BD195-7CB0-4756-AB5F-E5E223CD9831")]
     [MediaDescriptor(ExtensionString = "html,htm")]
     public class MarkupFile : MediaData
     {
-        private static string START_RENDER_KEY = "start";
-        private static string END_RENDER_KEY = "end";
-
-        [Display(Order = 1, GroupName = SystemTabNames.Content)]
+        [Display(Name = "Required Script URLs", Order = 1, GroupName = SystemTabNames.Content, Description = "URLs of script files (one per line) to be loaded, normally in the page footer.")]
         [UIHint("textarea")]
         public virtual string Scripts { get; set; }
 
-        [Display(Order = 1, GroupName = SystemTabNames.Content)]
+        [Display(Name = "Required Stylesheet URLs", Order = 1, GroupName = SystemTabNames.Content, Description = "URLs of stylesheets (one per line) to be loaded, normally in the HEAD tag.")]
         [UIHint("textarea")]
         public virtual string Styles { get; set; }
-
-        // These are used statically by AppFile as well, to get the HTML out of the zip
-
-        public string ExtractHtml(string html)
+        
+        public string ExtractMarkup(string markup)
         {
-            html = Regex.Split(html, string.Concat("<!--\\s?", START_RENDER_KEY, "\\s?-->")).Last();
-            html = Regex.Split(html, string.Concat("<!--\\s?", END_RENDER_KEY, "\\s?-->")).First();
-            return html;
+            markup = Regex.Split(markup, MarkupSettings.ExtractionDelimiters.Start).Last();
+            markup = Regex.Split(markup, MarkupSettings.ExtractionDelimiters.End).First();
+            return markup;
         }
 
         public virtual string Markup
         {
             get
             {
-                return ExtractHtml(new StreamReader(BinaryData.OpenRead()).ReadToEnd());
+                return ExtractMarkup(new StreamReader(BinaryData.OpenRead()).ReadToEnd());
             }
         }
     }

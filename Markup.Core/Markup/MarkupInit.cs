@@ -14,17 +14,16 @@ namespace Markup
     {
         public void Initialize(InitializationEngine context)
         {
-
             RouteTable.Routes.Add(new Route
             (
-                "resource.app",
+                MarkupSettings.ResourceHandlerUrlPattern.Split('?').First().Trim(@"\/".ToCharArray()),
                 new MarkupArchiveResourceHandler()
             ));
         }
 
         public void Uninitialize(InitializationEngine context)
         {
-            //throw new NotImplementedException();
+            
         }
     }
 }

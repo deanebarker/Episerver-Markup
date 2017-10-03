@@ -32,13 +32,13 @@ namespace Markup.Controllers
             foreach (var file in currentContent.GetFiles())
             {
                 // Autoload any JS
-                if (Path.GetExtension(file) == ".js")
+                if (MarkupSettings.JsExtensions.Contains(Path.GetExtension(file)))
                 {
                     AddScript(GetSupportingFileUrl(currentContent.ContentLink.ID, file));
                 }
 
                 // Autoload any CSS
-                if (Path.GetExtension(file) == ".css")
+                if (MarkupSettings.CssExtensions.Contains(Path.GetExtension(file)))
                 {
                     AddStylesheet(GetSupportingFileUrl(currentContent.ContentLink.ID, file));
                 }
@@ -65,8 +65,7 @@ namespace Markup.Controllers
 
         private string GetSupportingFileUrl(int id, string fileName)
         {
-            return string.Concat("/resource.app?id=", id, "&file=", fileName);
-
+            return string.Format(MarkupSettings.ResourceHandlerUrlPattern, id, fileName);
         }
 
     }
