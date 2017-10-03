@@ -23,7 +23,7 @@ namespace Markup.Controllers
             AddScript(currentContent.Scripts);
             AddStylesheet(currentContent.Styles);
 
-            // Loop every media asset of this block
+            // Loop every media item inside the same asset folder as this file
             contentLoader.GetChildren<MediaData>(currentContent.ParentLink).ToList().ForEach(media =>
             {
                 var extension = Path.GetExtension(((FileBlob)media.BinaryData).FilePath);

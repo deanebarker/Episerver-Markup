@@ -11,6 +11,7 @@ namespace Markup.Controllers
             AddScript(currentContent.Scripts);
             AddStylesheet(currentContent.Styles);
 
+            // Add references for all the other files in the zip archive
             currentContent.GetFiles().ForEach(file =>
             {
                 var extension = Path.GetExtension(file);
