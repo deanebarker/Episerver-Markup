@@ -21,5 +21,8 @@ namespace Markup
 
         // This is NOT the extension mapping for MarkupFile. This is list of extensions that MarkupArchiveFile looks for to find its base content.
         public static List<string> MarkupExtensions = new List<string>() { ".html", ".htm" };
+
+        public const string ContentArg = "id";
+        public const string FileArg = "file";
     }
 }
