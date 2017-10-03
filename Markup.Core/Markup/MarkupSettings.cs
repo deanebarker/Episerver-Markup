@@ -8,12 +8,7 @@ namespace Markup
 {
     public static class MarkupSettings
     {
-        public static class ExtractionDelimiters
-        {
-            public const string Start = "<!--\\s?start\\s?-->";
-            public const string End = "<!--\\s?end\\s?-->";
-        }
-
+        // This needs to be a querystring arg situation. And if you change the arg names, you need to change HandlerArgs below
         public const string ResourceHandlerUrlPattern = "/markup.resource?id={0}&file={1}";
 
         public static List<string> JsExtensions = new List<string>() { ".js" };
@@ -22,7 +17,16 @@ namespace Markup
         // This is NOT the extension mapping for MarkupFile. This is list of extensions that MarkupArchiveFile looks for to find its base content.
         public static List<string> MarkupExtensions = new List<string>() { ".html", ".htm" };
 
-        public const string ContentArg = "id";
-        public const string FileArg = "file";
+        public static class ExtractionDelimiters
+        {
+            public const string Start = "<!--\\s?start\\s?-->";
+            public const string End = "<!--\\s?end\\s?-->";
+        }
+
+        public static class HandlerArgs
+        {
+            public const string Content = "id";
+            public const string File = "file";
+        }
     }
 }

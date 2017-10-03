@@ -18,12 +18,12 @@ namespace Markup
         public void ProcessRequest(HttpContext context)
         {
             // Get local variables
-            if(String.IsNullOrWhiteSpace(context.Request.QueryString[MarkupSettings.ContentArg]) || (String.IsNullOrWhiteSpace(context.Request.QueryString[MarkupSettings.FileArg])))
+            if(String.IsNullOrWhiteSpace(context.Request.QueryString[MarkupSettings.HandlerArgs.Content]) || (String.IsNullOrWhiteSpace(context.Request.QueryString[MarkupSettings.HandlerArgs.File])))
             {
                 throw NotFound();
             }
-            var id = context.Request.QueryString[MarkupSettings.ContentArg];
-            var file = context.Request.QueryString[MarkupSettings.FileArg];
+            var id = context.Request.QueryString[MarkupSettings.HandlerArgs.Content];
+            var file = context.Request.QueryString[MarkupSettings.HandlerArgs.File];
 
             // Get the block
             var repo = ServiceLocator.Current.GetInstance<IContentRepository>();
