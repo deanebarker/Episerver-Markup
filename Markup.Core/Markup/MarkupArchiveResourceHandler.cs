@@ -17,7 +17,7 @@ namespace Markup
 
         public void ProcessRequest(HttpContext context)
         {
-            // Get local variables
+            // Get the inbound data
             if (String.IsNullOrWhiteSpace(context.Request.QueryString[MarkupSettings.HandlerArgs.Content]) || (String.IsNullOrWhiteSpace(context.Request.QueryString[MarkupSettings.HandlerArgs.File])))
             {
                 throw NotFound();
@@ -25,21 +25,15 @@ namespace Markup
             var id = context.Request.QueryString[MarkupSettings.HandlerArgs.Content];
             var file = context.Request.QueryString[MarkupSettings.HandlerArgs.File];
 
-            // Get the block
+            // Get the content of the file
             var repo = ServiceLocator.Current.GetInstance<IContentRepository>();
-            MarkupArchiveFile markupArchiveFile;
+            Byte[] content;
             try
             {
-                markupArchiveFile = repo.Get<MarkupArchiveFile>(new ContentReference(id));
+                var markupArchiveFile = repo.Get<MarkupArchiveFile>(new ContentReference(id));
+                content = markupArchiveFile.GetBytes(file);
             }
             catch (Exception e)
-            {
-                throw NotFound();
-            }
-
-            // Get the content of the file
-            var content = markupArchiveFile.GetFileContent(file);
-            if (content == null)
             {
                 throw NotFound();
             }

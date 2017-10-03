@@ -32,7 +32,7 @@ namespace Markup.Models
         {
             get
             {
-                return ExtractMarkup(new StreamReader(BinaryData.OpenRead()).ReadToEnd());
+                return ExtractMarkup(new StreamReader(BinaryData.OpenRead(), true).ReadToEnd());
             }
         }
     }

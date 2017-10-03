@@ -27,7 +27,7 @@ namespace Markup.Models
                     {
                         if (file.ToLower() == string.Concat(baseName, extension))
                         {
-                            return ExtractMarkup(GetTextContent(file));
+                            return ExtractMarkup(GetText(file));
                         }
                     }
                 }
@@ -40,23 +40,17 @@ namespace Markup.Models
             return ZipFile.OpenRead(((FileBlob)BinaryData).FilePath).Entries.Select(e => e.FullName).ToList();
         }
 
-        public string GetTextContent(string filePath, Encoding encoding = null)
+        public string GetText(string filePath)
         {
-            encoding = encoding ?? Encoding.UTF8;
-            return encoding.GetString(GetFileContent(filePath));
+            var bytes = GetBytes(filePath);
+            return GetEncoding(bytes).GetString(bytes);
         }
 
-        public Byte[] GetFileContent(string filePath)
+        public Byte[] GetBytes(string filePath)
         {
-            var entry = ZipFile.OpenRead(((FileBlob)BinaryData).FilePath).GetEntry(filePath);
-            if (entry == null)
-            {
-                return null;
-            }
-
-            var stream = entry.Open();
+            var stream = ZipFile.OpenRead(((FileBlob)BinaryData).FilePath).GetEntry(filePath).Open();
             byte[] buffer = new byte[16 * 1024];
-            using (MemoryStream ms = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
                 int read;
                 while ((read = stream.Read(buffer, 0, buffer.Length)) > 0)
@@ -65,6 +59,20 @@ namespace Markup.Models
                 }
                 return ms.ToArray();
             }
+        }
+
+        // Taken from: https://stackoverflow.com/questions/3825390/effective-way-to-find-any-files-encoding
+        private Encoding GetEncoding(byte[] bytes)
+        {
+            var bom = bytes.Take(5).ToArray();
+
+            // Analyze the BOM
+            if (bom[0] == 0x2b && bom[1] == 0x2f && bom[2] == 0x76) return Encoding.UTF7;
+            if (bom[0] == 0xef && bom[1] == 0xbb && bom[2] == 0xbf) return Encoding.UTF8;
+            if (bom[0] == 0xff && bom[1] == 0xfe) return Encoding.Unicode; //UTF-16LE
+            if (bom[0] == 0xfe && bom[1] == 0xff) return Encoding.BigEndianUnicode; //UTF-16BE
+            if (bom[0] == 0 && bom[1] == 0 && bom[2] == 0xfe && bom[3] == 0xff) return Encoding.UTF32;
+            return Encoding.ASCII;
         }
     }
 }
