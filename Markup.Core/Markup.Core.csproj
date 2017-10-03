@@ -63,6 +63,7 @@
     <Compile Include="Markup\MarkupInit.cs" />
     <Compile Include="Markup\MarkupSettings.cs" />
     <Compile Include="Markup\Models\MarkupArchiveFile.cs" />
+    <Compile Include="Markup\Controllers\MarkupControllerBase.cs" />
     <Compile Include="Markup\Models\MarkupFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

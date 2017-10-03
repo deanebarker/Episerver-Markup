@@ -18,7 +18,7 @@ namespace Markup
         public void ProcessRequest(HttpContext context)
         {
             // Get local variables
-            if(String.IsNullOrWhiteSpace(context.Request.QueryString[MarkupSettings.HandlerArgs.Content]) || (String.IsNullOrWhiteSpace(context.Request.QueryString[MarkupSettings.HandlerArgs.File])))
+            if (String.IsNullOrWhiteSpace(context.Request.QueryString[MarkupSettings.HandlerArgs.Content]) || (String.IsNullOrWhiteSpace(context.Request.QueryString[MarkupSettings.HandlerArgs.File])))
             {
                 throw NotFound();
             }
@@ -32,14 +32,14 @@ namespace Markup
             {
                 markupArchiveFile = repo.Get<MarkupArchiveFile>(new ContentReference(id));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw NotFound();
             }
 
             // Get the content of the file
             var content = markupArchiveFile.GetFileContent(file);
-            if(content == null)
+            if (content == null)
             {
                 throw NotFound();
             }

@@ -2,13 +2,10 @@
 using EPiServer.DataAbstraction;
 using EPiServer.DataAnnotations;
 using EPiServer.Framework.DataAnnotations;
-using System;
-using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
-using System.Text;
-using EPiServer.Framework.Web.Resources;
 
 namespace Markup.Models
 {
@@ -23,7 +20,7 @@ namespace Markup.Models
         [Display(Name = "Required Stylesheet URLs", Order = 1, GroupName = SystemTabNames.Content, Description = "URLs of stylesheets (one per line) to be loaded, normally in the HEAD tag.")]
         [UIHint("textarea")]
         public virtual string Styles { get; set; }
-        
+
         public string ExtractMarkup(string markup)
         {
             markup = Regex.Split(markup, MarkupSettings.ExtractionDelimiters.Start).Last();
@@ -39,6 +36,4 @@ namespace Markup.Models
             }
         }
     }
-
-   
 }
