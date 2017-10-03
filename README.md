@@ -43,7 +43,7 @@ https://vimeo.com/236467181
 
 ### Status
 
-**Ridiculously Alpha**. This is something I was herely playing around with. It works in my limited demo environment, but it has not gone through any formal testing whatsoever.
+**Ridiculously Alpha**. This is something I was merely playing around with. It works in my limited demo environment, but it has not gone through any formal testing whatsoever.
 
 >Deane Barker    
 deane@blendinteractive.com    
