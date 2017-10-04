@@ -2,10 +2,8 @@
 using EPiServer.DataAbstraction;
 using EPiServer.DataAnnotations;
 using EPiServer.Framework.DataAnnotations;
+using Markup.Events;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace Markup.Models
 {
@@ -21,18 +19,11 @@ namespace Markup.Models
         [UIHint("textarea")]
         public virtual string Styles { get; set; }
 
-        public string ExtractMarkup(string markup)
-        {
-            markup = Regex.Split(markup, MarkupSettings.ExtractionDelimiters.Start).Last();
-            markup = Regex.Split(markup, MarkupSettings.ExtractionDelimiters.End).First();
-            return markup;
-        }
-
         public virtual string Markup
         {
             get
             {
-                return ExtractMarkup(new StreamReader(BinaryData.OpenRead(), true).ReadToEnd());
+                return MarkupEventManager.OutputMarkup(MarkupFileReader.GetText(this), Name);
             }
         }
     }

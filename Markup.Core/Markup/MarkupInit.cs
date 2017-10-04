@@ -1,6 +1,8 @@
 ﻿using EPiServer.Framework;
 using EPiServer.Framework.Initialization;
+using Markup.Events;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web.Routing;
 
 namespace Markup
@@ -17,8 +19,18 @@ namespace Markup
             RouteTable.Routes.Add(new Route
             (
                 handlerPath,
-                new MarkupArchiveResourceHandler()
+                new MarkupResourceHandler()
             ));
+
+            // This is the default behavior, to extract HTML from between comments
+            MarkupEventManager.OnBeforeOutputMarkup += (sender, e) =>
+            {
+                if (e.Text != null)
+                {
+                    e.Text = Regex.Split(e.Text, MarkupSettings.ExtractionDelimiters.Start).Last();
+                    e.Text = Regex.Split(e.Text, MarkupSettings.ExtractionDelimiters.End).First();
+                }
+            };
         }
 
         public void Uninitialize(InitializationEngine context)

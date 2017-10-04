@@ -1,42 +1,42 @@
 ﻿using EPiServer.Core;
 using EPiServer.Framework.Web.Resources;
 using EPiServer.Web.Mvc;
+using Markup.Events;
 using System;
-using System.Linq;
+using System.IO;
 
 namespace Markup.Controllers
 {
     public abstract class MarkupControllerBase<T> : PartialContentController<T> where T : IContentData
     {
-        protected void AddReference(string extension, string path)
+        protected void AddReference(ContentReference contentLink, string paths)
         {
-            // Autoload any JS
-            if (MarkupSettings.JsExtensions.Contains(extension))
+            if (String.IsNullOrWhiteSpace(paths))
             {
-                AddScript(path);
+                return;
             }
 
-            // Autoload any CSS
-            if (MarkupSettings.CssExtensions.Contains(extension))
+            foreach (var path in paths.Split(Environment.NewLine.ToCharArray()))
             {
-                AddStylesheet((path));
+                if (!MarkupEventManager.EvaluateReference(contentLink, path))
+                {
+                    var resolvedPath = path;
+                    if (!ContentReference.IsNullOrEmpty(contentLink))
+                    {
+                        resolvedPath = string.Format(MarkupSettings.ResourceHandlerUrlPattern, contentLink, path);
+                    }
+
+                    if (MarkupSettings.JsExtensions.Contains(Path.GetExtension(path)))
+                    {
+                        ClientResources.RequireScript(resolvedPath).AtFooter();
+                    }
+
+                    if (MarkupSettings.CssExtensions.Contains(Path.GetExtension(path)))
+                    {
+                        ClientResources.RequireStyle(resolvedPath);
+                    }
+                }
             }
-        }
-
-        protected void AddScript(string value)
-        {
-            (value ?? string.Empty).Split(Environment.NewLine.ToCharArray()).ToList().ForEach(s =>
-            {
-                ClientResources.RequireScript(s).AtFooter();
-            });
-        }
-
-        protected void AddStylesheet(string value)
-        {
-            (value ?? string.Empty).Split(Environment.NewLine.ToCharArray()).ToList().ForEach(s =>
-            {
-                ClientResources.RequireStyle(s);
-            });
         }
     }
 }

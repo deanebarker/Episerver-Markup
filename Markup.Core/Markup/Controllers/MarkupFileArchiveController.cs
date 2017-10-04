@@ -1,5 +1,4 @@
 ﻿using Markup.Models;
-using System.IO;
 using System.Web.Mvc;
 
 namespace Markup.Controllers
@@ -8,23 +7,16 @@ namespace Markup.Controllers
     {
         public override ActionResult Index(MarkupArchiveFile currentContent)
         {
-            AddScript(currentContent.Scripts);
-            AddStylesheet(currentContent.Styles);
+            AddReference(null, currentContent.Scripts);
+            AddReference(null, currentContent.Styles);
 
             // Add references for all the other files in the zip archive
             currentContent.GetFiles().ForEach(file =>
             {
-                var extension = Path.GetExtension(file);
-                var path = GetSupportingFileUrl(currentContent.ContentLink.ID, file);
-                AddReference(extension, path);
+                AddReference(currentContent.ContentLink, file);
             });
 
             return Content(currentContent.Markup);
-        }
-
-        private string GetSupportingFileUrl(int id, string fileName)
-        {
-            return string.Format(MarkupSettings.ResourceHandlerUrlPattern, id, fileName);
         }
     }
 }
