@@ -11,7 +11,9 @@ The intended usage is that hand-coded markup files (usually HTML) can be uploade
 
 >Note: this code will not compile without adding local references to `Episerver.dll`, `Episerver.Data.dll`, and `Episerver.Framework.dll`. This code has been compiled against v10.10.3 of those assemblies.
 
-## Markup File
+## Media Types
+
+### Markup File
 
 Mapped to the `.html` and `.htm` extensions by default.
 
@@ -25,7 +27,7 @@ All files in the same asset folder as the Markup File will be evaluated. Anythin
 
 Properties exist for "Required Script URLs" and "Required Stylesheet URLs." Those are handled just like local JS and CSS, and are used to bring in other resources (an external JavaScript library, for instance).
 
-## Markup Archive File
+### Markup Archive File
 
 Mapped to the `.app` extension by default.
 
@@ -41,7 +43,30 @@ A video of the Markup Archive File in action is available here:
 
 https://vimeo.com/236467181
 
-### Status
+## Available Events
+
+**MarkupEventManager.OnBeforeOutputMarkup(object, MarkupEventArgs)**    
+Allows modification of markup before output. Markup is in `e.Text` and can be modified in place.
+
+**MarkupEventManager.OnBeforeOutputStylesheet(object, MarkupEventArgs)**    
+Allows modification of stylesheet content output. CSS is in `e.Text` and can be modified in place.
+
+**MarkupEventManager.OnBeforeOutputScript(object, MarkupEventArgs)**    
+Allows modification of script content before output. Script is in `e.Text` and can be modified in place.
+
+**MarkupEventManager.OnBeforeAddReference(object, MarkupReferenceEventArgs)**    
+Allows cancellation of CSS/JS prior to reference inclusion. Set `e.Cancel` to true to cancel the inclusion.
+
+**MarkupEventManager.OnAfterFileRead(object, MarkupEventArgs)**    
+Allows modification of file content immediately after being read. The content will be in `e.Bytes` and can be modified in place.
+
+`e.Encoding` will have an encoding derived from the byte order mark to enable you to get text content via `Encoding.GetString()` and write back to a byte array.
+
+Note, however, that `e.Encoding` needs to be used in conjunction with the filename. If the encoding cannot be determined (if the file is an image, for example), `Encoding.ASCII` will be returned _as a default_.
+
+Be sure to check the filename to determine what content you might be dealing with and _do not assume that `Encoding.ASCII` means the content is from a text file_.
+
+## Status
 
 **Ridiculously Alpha**. This is something I was merely playing around with. It works in my limited demo environment, but it has not gone through any formal testing whatsoever.
 
