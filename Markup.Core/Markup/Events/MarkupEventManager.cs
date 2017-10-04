@@ -43,9 +43,8 @@ namespace Markup.Events
             return e.Cancel; // If this is NULL, that means "do not add this reference"
         }
 
-        public static void EvaluateFileContents(string fileName, byte[] bytes, string text)
+        public static void EvaluateFileContents(MarkupEventArgs e)
         {
-            var e = new MarkupEventArgs(fileName, bytes, text);
             OnAfterFileRead(null, e);
         }
     }

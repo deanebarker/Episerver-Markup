@@ -46,7 +46,7 @@ namespace Markup
                         memoryStream.Write(buffer, 0, read);
                     }
                     stream.Close();
-                    return memoryStream.ToArray();
+                    return EvaluateFileRead(content.Name, memoryStream.ToArray());
                 }
             }
 
@@ -71,17 +71,11 @@ namespace Markup
             return null;
         }
 
-        private static string EvaluateFileRead(string filename, string text)
-        {
-            var e = new MarkupEventArgs(filename, null, text);
-            OnAfterFileRead(null, e);
-            return e.Text;
-        }
-
         private static byte[] EvaluateFileRead(string filename, byte[] bytes)
         {
             var e = new MarkupEventArgs(filename, bytes, null);
-            OnAfterFileRead(null, e);
+            e.Encoding = GetEncoding(bytes);
+            MarkupEventManager.EvaluateFileContents(e);
             return e.Bytes;
         }
 
@@ -100,8 +94,7 @@ namespace Markup
         public static string GetText(IContent content, string fileName = null)
         {
             var bytes = GetBytes(content, fileName);
-            var text = GetText(bytes);
-            return EvaluateFileRead(content.Name, text);
+            return GetText(bytes);
         }
 
         public static string GetText(Byte[] bytes)
