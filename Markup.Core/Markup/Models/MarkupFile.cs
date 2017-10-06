@@ -12,11 +12,11 @@ namespace Markup.Models
     public class MarkupFile : MediaData
     {
         [Display(Name = "Required Script URLs", Order = 1, GroupName = SystemTabNames.Content, Description = "URLs of script files (one per line) to be loaded, normally in the page footer.")]
-        [UIHint("textarea")]
+        [UIHint("SimpleCode")]
         public virtual string Scripts { get; set; }
 
         [Display(Name = "Required Stylesheet URLs", Order = 1, GroupName = SystemTabNames.Content, Description = "URLs of stylesheets (one per line) to be loaded, normally in the HEAD tag.")]
-        [UIHint("textarea")]
+        [UIHint("SimpleCode")]
         public virtual string Styles { get; set; }
 
         public virtual string Markup

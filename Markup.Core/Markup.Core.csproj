@@ -42,6 +42,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\refs\EPiServer.Framework.dll</HintPath>
     </Reference>
+    <Reference Include="EPiServer.Shell">
+      <HintPath>..\refs\EPiServer.Shell.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -70,6 +73,7 @@
     <Compile Include="Markup\Controllers\MarkupControllerBase.cs" />
     <Compile Include="Markup\Models\MarkupFile.cs" />
     <Compile Include="Markup\Events\MarkupReferenceEventArgs.cs" />
+    <Compile Include="Markup\UI\CodeEditorDescriptor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
