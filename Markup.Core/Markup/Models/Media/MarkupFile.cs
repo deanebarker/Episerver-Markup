@@ -27,12 +27,12 @@ namespace Markup.Models.Media
 
         [Display(Name = "Stylesheet References", Order = 4)]
         [UIHint("SimpleCode")]
-        [SimpleCodeEditorSettings(MinHeight = 60)]
+        [SimpleCodeEditorSettings(MinHeight = MarkupSettings.SimpleCodeSettings.ReferencesMinHeight)]
         public virtual string StylesheetReferences { get; set; }
 
         [Display(Name = "Script References", Order = 5)]
         [UIHint("SimpleCode")]
-        [SimpleCodeEditorSettings(MinHeight = 60)]
+        [SimpleCodeEditorSettings(MinHeight = MarkupSettings.SimpleCodeSettings.ReferencesMinHeight)]
         public virtual string ScriptReferences { get; set; }
 
         public virtual string Markup

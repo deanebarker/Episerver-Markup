@@ -26,5 +26,10 @@ namespace Markup
             public const string Content = "id";
             public const string File = "file";
         }
+
+        public static class SimpleCodeSettings
+        {
+            public const int ReferencesMinHeight = 60;
+        }
     }
 }

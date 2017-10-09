@@ -24,12 +24,12 @@ namespace Markup.Models.Blocks
 
         [Display(Name = "Stylesheet References", Order = 4)]
         [UIHint("SimpleCode")]
-        [SimpleCodeEditorSettings(MinHeight = 60)]
+        [SimpleCodeEditorSettings(MinHeight = MarkupSettings.SimpleCodeSettings.ReferencesMinHeight)]
         public virtual string StylesheetReferences { get; set; }
 
         [Display(Name = "Script References", Order = 5)]
         [UIHint("SimpleCode")]
-        [SimpleCodeEditorSettings(MinHeight = 60)]
+        [SimpleCodeEditorSettings(MinHeight = MarkupSettings.SimpleCodeSettings.ReferencesMinHeight)]
         public virtual string ScriptReferences { get; set; }
 
         public string GetTextOfResource(string property)
@@ -46,7 +46,7 @@ namespace Markup.Models.Blocks
 
         public IEnumerable<string> GetResources()
         {
-            // We don't return anything here, since the "resources" are added inline above. Put
+            // We don't return anything here since the "resources" are added inline above. Put
             // another way, there are no "resources," so returning nothing here is correct.
             return new List<string>();
         }
