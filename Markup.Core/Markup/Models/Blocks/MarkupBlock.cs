@@ -1,9 +1,12 @@
-﻿using EPiServer.Core;
+﻿using EPiServer;
+using EPiServer.Core;
 using EPiServer.DataAnnotations;
+using EPiServer.Framework.Blobs;
+using EPiServer.ServiceLocation;
 using Markup.Core.Markup.UI;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace Markup.Models.Blocks
 {
@@ -32,23 +35,27 @@ namespace Markup.Models.Blocks
         [SimpleCodeEditorSettings(MinHeight = MarkupSettings.SimpleCodeSettings.ReferencesMinHeight)]
         public virtual string ScriptReferences { get; set; }
 
-        public string GetTextOfResource(string property)
+        public string GetTextOfResource(string filename)
         {
-            // This should never be called
-            throw new NotImplementedException();
+            return GetBytesOfResource(filename).GetString();
         }
 
-        public byte[] GetBytesOfResource(string property)
+        public byte[] GetBytesOfResource(string filename)
         {
-            // This should never be called
-            throw new NotImplementedException();
+            return GetAssets().FirstOrDefault(a => a.Name == filename).BinaryData.ReadAllBytes();
         }
 
         public IEnumerable<string> GetResources()
         {
-            // We don't return anything here since the "resources" are added inline above. Put
-            // another way, there are no "resources," so returning nothing here is correct.
-            return new List<string>();
+            return GetAssets().Select(a => a.Name);
+        }
+
+        private IEnumerable<MediaData> GetAssets()
+        {
+            var contentAssetHelper = ServiceLocator.Current.GetInstance<ContentAssetHelper>();
+            var assetFolder = contentAssetHelper.GetOrCreateAssetFolder(((IContent)this).ContentLink);
+            var repo = ServiceLocator.Current.GetInstance<IContentRepository>();
+            return repo.GetChildren<MediaData>(assetFolder.ContentLink);
         }
     }
 }
