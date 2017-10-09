@@ -20,12 +20,12 @@ Markup can be either manually added in Edit Mode (through a `MarkupBlock`) or ad
 
 Adding raw markup to a page can logically result in the output of four things:
 
-* **Base Markup.** This is the markup that is output to the page.
+* **Base Markup.** This is the markup that is output to the page -- usually always HTML, but can technically be any text.
 * **Inline Resources.** This is inline Javascript and CSS that is directly output to the page.
-* **Local Resources.** These are Javascript and CSS files associated with attached to the content (through various methods, described below) that are referenced through `LINK` and `SCRIPT` tags.
-* **Remote Resource URLs.** These are URLs to off-site Javascript and CSS that are referenced through `LINK` and `SCRIPT` tags. (i.e. -- jQuery, Bootstrap, etc.)
+* **Local Resources.** These are Javascript and CSS files managed in the Episerver site and associated the content (through various methods, described below) that are referenced through `LINK` and `SCRIPT` tags.
+* **Remote Resource URLs.** These are URLs to off-site Javascript and CSS that are referenced through `LINK` and `SCRIPT` tags.
 
-Base Markup will always be output. The other three may or may not be output.
+Base Markup will always be output wherever the content is placed. The other three elements may or may not be output, depending on need.
 
 >Example: an SVG graphic requires nothing but a snippet of XML (the Base Markup).
 
@@ -33,14 +33,14 @@ Base Markup will always be output. The other three may or may not be output.
 
 Base Markup and Inline Resources are always output to the page. Local and Remote Resources are evaluated for reference inclusion.
 
-(To clarify: a _resource_ is the content itself, a _reference_ is the tag that refers to that content. So, a managed CSS file is a _resource_. The `LINK` tag that loads that file is a _reference_.)
+(To clarify: a _resource_ is the content itself, a _reference_ is the tag that refers to that content. So, a managed CSS file is a _resource_. The `LINK` tag that loads that file into a page is a _reference_.)
 
-## Resource Placement
+## Resource and Reference Placement
 
 References to Resources are placed using the `ClientResources` helper class.
 
-* Inline Resources using `ClientResources.RequireStyleInline()` and `ClientResources.RequireScriptInline()`
-* Local and Remote Resources using `ClientResources.RequireStyle()` and `ClientResources.RequireScript().AtFooter()`
+* Inline Resources use `ClientResources.RequireStyleInline()` and `ClientResources.RequireScriptInline()`
+* Local and Remote Resources use `ClientResources.RequireStyle()` and `ClientResources.RequireScript().AtFooter()`
 
 By default, the Alloy demo site places these references --
 
@@ -53,7 +53,10 @@ Local Resources will be routed through a resource handler class. By default, thi
 
     /markup.resource?id=[ID of the content]&file=[name of the file]
 
-The resource handler reads the specified content object and extracts and returns the resource contents.
+The resource handler reads the specified content object and extracts and returns the resource contents with the correct MIME type. This handler architecture is used for two reasons:
+
+1. The Markup Archive File is a zip archive of multiple filee. The handler opens the archive and extracts the resource (see "Markup Archive File" below). There is technically no direct URL to this resource.
+2. Resource output is wrapped by an event, to allow custom processing before delivery.
 
 ## Content Types
 
@@ -68,7 +71,7 @@ Each content type handles sources its Base Markup and Local Resources through im
 
 ### BlockData: Markup Block
 
-* Base Markup is entered to a `Markup` property directly in Edit Mode.
+* Base Markup is entered in a `Markup` property directly in Edit Mode.
 * Local Resources are files in the assets folder for the block. Anything with `.js` or `.css` extensions will be referenced.
 
 ### MediaData: Markup File
