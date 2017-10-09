@@ -2,6 +2,7 @@
 using EPiServer.Core;
 using EPiServer.ServiceLocation;
 using Markup.Events;
+using Markup.Models;
 using System;
 using System.Web;
 using System.Web.Routing;
@@ -30,11 +31,14 @@ namespace Markup
                 file = context.Request.QueryString[MarkupSettings.HandlerArgs.File];
             }
 
-            // Get the content of the file
+            // Get the content
             var content = ServiceLocator.Current.GetInstance<IContentRepository>().Get<IContent>(new ContentReference(id));
-            var data = MarkupFileReader.GetBytes(new ContentReference(id), file);
-            if (content == null)
+
+            // Get the bytes of the requested resource
+            var data = ((IMarkupContent)content).GetBytesOfResource(file);
+            if (data == null)
             {
+                // That file didn't exist
                 throw NotFound();
             }
 
@@ -43,14 +47,12 @@ namespace Markup
             switch (context.Response.ContentType)
             {
                 case "text/css":
-                    var css = MarkupFileReader.GetText(data);
-                    context.Response.Write(MarkupEventManager.OutputStylesheet(css, file ?? content.Name));
+                    context.Response.Write(MarkupEventManager.OutputStylesheet(data.GetString(), file ?? content.Name, content));
                     break;
 
                 case "application/x-javascript":
                 case "application/javascript":
-                    var js = MarkupFileReader.GetText(data);
-                    context.Response.Write(MarkupEventManager.OutputScript(js, file ?? content.Name));
+                    context.Response.Write(MarkupEventManager.OutputScript(data.GetString(), file ?? content.Name, content));
                     break;
 
                 default:

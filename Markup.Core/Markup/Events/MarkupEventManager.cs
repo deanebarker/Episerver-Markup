@@ -1,5 +1,7 @@
 ﻿using EPiServer.Core;
+using Markup.Models;
 using System;
+using System.IO;
 
 namespace Markup.Events
 {
@@ -9,29 +11,35 @@ namespace Markup.Events
 
         public static event Action<object, MarkupReferenceEventArgs> OnBeforeAddReference = delegate { };
 
-        public static event Action<object, MarkupEventArgs> OnAfterFileRead = delegate { };
-
         public static event Action<object, MarkupEventArgs> OnBeforeOutputScript = delegate { };
 
         public static event Action<object, MarkupEventArgs> OnBeforeOutputStylesheet = delegate { };
 
-        public static string OutputScript(string text, string fileName)
+        public static string OutputScript(string text, string fileName, IContent contentData = null)
         {
             var e = new MarkupEventArgs(fileName, null, text);
+            e.ContentData = contentData;
             OnBeforeOutputScript(null, e);
             return e.Text;
         }
 
-        public static string OutputStylesheet(string text, string fileName)
+        public static string OutputStylesheet(string text, string fileName, IContent contentData = null)
         {
             var e = new MarkupEventArgs(fileName, null, text);
+            e.ContentData = contentData;
             OnBeforeOutputStylesheet(null, e);
             return e.Text;
         }
 
-        public static string OutputMarkup(string text, string fileName = null)
+        public static string OutputMarkup(IMarkupContent content)
         {
-            var e = new MarkupEventArgs(fileName, null, text);
+            var filename = ((IContent)content).Name;
+            if(String.IsNullOrWhiteSpace(Path.GetExtension(filename)))
+            {
+                filename = string.Concat(filename, ".html");
+            }
+            var e = new MarkupEventArgs(filename, null, content.Markup);
+            e.ContentData = (IContent)content;
             OnBeforeOutputMarkup(null, e);
             return e.Text;
         }
@@ -40,12 +48,7 @@ namespace Markup.Events
         {
             var e = new MarkupReferenceEventArgs(contentLink, path);
             OnBeforeAddReference(null, e);
-            return e.Cancel; // If this is NULL, that means "do not add this reference"
-        }
-
-        public static void EvaluateFileContents(MarkupEventArgs e)
-        {
-            OnAfterFileRead(null, e);
+            return e.Cancel;
         }
     }
 }

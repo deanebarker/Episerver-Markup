@@ -1,4 +1,6 @@
-﻿using System;
+﻿using EPiServer.Core;
+using Markup.Models;
+using System;
 using System.Text;
 
 namespace Markup.Events
@@ -9,6 +11,7 @@ namespace Markup.Events
         public Byte[] Bytes { get; set; }
         public string Text { get; set; }
         public Encoding Encoding { get; set; }
+        public IContent ContentData { get; set; } 
 
         public MarkupEventArgs()
         {

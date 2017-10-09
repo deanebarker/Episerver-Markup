@@ -1,22 +1,16 @@
-﻿using Markup.Models;
+﻿using EPiServer.Web.Mvc;
+using Markup.Events;
+using Markup.Models.Media;
 using System.Web.Mvc;
 
 namespace Markup.Controllers
 {
-    public class MarkupFileArchiveController : MarkupControllerBase<MarkupArchiveFile>
+    public class MarkupArchiveFileController : PartialContentController<MarkupArchiveFile>
     {
         public override ActionResult Index(MarkupArchiveFile currentContent)
         {
-            AddReference(null, currentContent.Scripts);
-            AddReference(null, currentContent.Styles);
-
-            // Add references for all the other files in the zip archive
-            currentContent.GetFiles().ForEach(file =>
-            {
-                AddReference(currentContent.ContentLink, file);
-            });
-
-            return Content(currentContent.Markup);
+            MarkupResourceManager.ProcessStandardReferences(currentContent);
+            return Content(MarkupEventManager.OutputMarkup(currentContent));
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Markup
         public void Initialize(InitializationEngine context)
         {
             // This should accurately pull the path from the pattern...
-            var handlerPath = MarkupSettings.ResourceHandlerUrlPattern.Split('?').First().Trim(@"\/".ToCharArray());
+            var handlerPath = MarkupSettings.ResourceHandlerUrl;
 
             RouteTable.Routes.Add(new Route
             (

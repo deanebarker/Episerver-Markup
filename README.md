@@ -1,43 +1,80 @@
 # Episerver Markup
 
-This a library to assist working with "hand-coded" markup files in Episerver CMS.
+A library to assist working with "hand-coded" markup in Episerver CMS.
 
-It provides two media types:
+It provides three content types:
 
+* Markup Block
 * Markup File
 * Markup Archive File
 
-The intended usage is that hand-coded markup files (usually HTML) can be uploaded into the Episerver workarea, and the resulting media item can be dragged into a content area, where it will render its contents.
+Content representing hand-coded markup can be dragged into a content area where it will output to the page along with associated "resources", meaning inline or references scripts and styles.
 
->Note: this code will not compile without adding local references to `Episerver.dll`, `Episerver.Data.dll`, and `Episerver.Framework.dll`. This code has been compiled against v10.10.3 of those assemblies.
+This markup is either manually added in Edit Mode (through a `MarkupBlock`) or added via file upload (`MarkupFile` or `MarkupArchiveFile`).
 
-## Media Types
+>Note: this code will not compile without adding local references to `Episerver.dll`, `Episerver.Data.dll`, `Episerver.Shell`, and `Episerver.Framework.dll`. This code has been compiled against v10.10.3 of those assemblies.
 
-### Markup File
+## Content Types
 
-Mapped to the `.html` and `.htm` extensions by default.
+This library provides three content types, all of which implement a common interface and result in the same basic behavior: markup output to the page, with associated styles and scripts either added inline or referenced from URLs.
 
-Represents an HTML file. When placed on a page, it will write its contents to the response.
+### Interface: IMarkupContent
 
-If delimiter comments are in the file (`<!-- start -->` and `<!-- end -->` by default), it will only render the content _between_ those comments. Anything above and below will be discard. (Use when you might need a full HTML document for local development, but simply want to extract a section for publication.)
+The `IMarkupContent` interface provides for five properties which output content to the page
 
-All files in the same asset folder as the Markup File will be evaluated. Anything with a `.js` extension will be passed to to `ClientResources.RequireScript().AtFooter()` and anything with a `.css` extension will be passed to `ClientResources.RequireStyle()`. These will be direct URLs links to those assets.
+**string Markup**    
+Handled differently in the different implementations. Available in Edit Mode for `MarkupBlock` and read from the associated media for `MarkupFile` and `MarkupArchiveFile`.
 
-(In the Alloy demo site, those are rendered in the `HEAD` tag and just before the closing `BODY` tag, but your templating may vary.)
+**string InlineStyles**   
+Raw CSS to be output to the page on which the content is placed. This will be added via `ClientResources.RequireStyleInline()`. Available in Edit Mode.
 
-Properties exist for "Required Script URLs" and "Required Stylesheet URLs." Those are handled just like local JS and CSS, and are used to bring in other resources (an external JavaScript library, for instance).
+**string InlineScript**   
+Raw Javascript to be output to the page on which the content is placed. This will be added via `ClientResources.RequireScriptInline()`. Available in Edit Mode.
 
-### Markup Archive File
+**string StylesheetReferences**    
+URLs of stylesheets to be including on the page via a `LINK` tag (one URL per line). These will be added via to `ClientResources.RequireStyle()`. Available in Edit Mode.
 
-Mapped to the `.app` extension by default.
+**string ScriptReferences**    
+URLs of script files to be including on the page via a `SCRIPT` tag (one URL per line). These will be added via `ClientResources.RequireScript().AtFooter()`. Available in Edit Mode.
 
-Represents a zip archive with its extension changed. Related markup assets can be placed in this archive so they can be managed as a single file.
+By default, the Alloy demo site places references --
 
-Any HTML, JS, and CSS files in the _root_ of this archive will be handled as above. (Instead of looking in the file's assets folder, it searches the zip archive.)
+* Styles: in the `HEAD` tag
+* Scripts: just above the closing `BODY` tag
 
-The base HTML file should have the same name as the Markup Archive File (if the archive is called `mymarkup.app` then the file in the root should be `mymarkup.html`). And remember that the files need to be in the _root_ of the archive, which means you can't zip a folder containing the files -- rather, you need to zip the files as a group.
+See the `OnBeforeAddReference` event below for other ways of handling their placement.
 
-References to JS and CSS are added with a URL pattern that routes requests to a custom handler (`markup.resources` by default) which extracts the file contents from the zip.
+Managed references (meaning references that map to content objects), will be routed through a resource handler class. By default, this path is:
+
+    /markup.resource?id=[ID of the content]&file=[name of the file]
+
+The resource handler reads the specified content object and extracts and returns the resource contents.
+
+All of the properties above use an instance of the "Poor Man's Code Editor" for their UI editing component.
+
+https://gist.github.com/deanebarker/f1c2542b3a510eb992c76c7e07c2f16b
+
+### BlockData: Markup Block
+
+Provides an explicit `Markup` field for raw HTML.
+
+### MediaData: Markup File
+
+Mapped to the `.html` and `.htm` extensions by default. Represents an HTML file. When placed on a page, it will write its contents to the response.
+
+The markup is the content of the file itself.
+
+All files in the same asset folder as the Markup File will be evaluated as a resource. Anything with a `.js` or `.css` extensions will be added as references. (Clearly, put a `MarkupFile` in its own asset folder, unless more than one file should share the same script and style resources.)
+
+### MediaData: Markup Archive File
+
+Mapped to the `.app` extension by default. Represents a zip archive with its extension changed. Related markup assets can be placed in this archive so they can be managed as a single file.
+
+The markup is an HTML file in the _root_ of the archive with the same base name as the archive and a `.html` extension. (e.g. -- if the archive is called `markup.app` then the file in the root should be `markup.html`)
+
+Any `.js` and `.css` files in the _root_ of this archive will be added as references.
+
+Note the emphasis on _root_. This means you can't zip a directory because when those files will be in the directory in the root. On Windows, this means you highlight a group of files (_not_ a directory), then select `Send To...Compressed (zipped) folder`.
 
 A video of the Markup Archive File in action is available here:
 
@@ -55,16 +92,7 @@ Allows modification of stylesheet content output. CSS is in `e.Text` and can be 
 Allows modification of script content before output. Script is in `e.Text` and can be modified in place.
 
 **MarkupEventManager.OnBeforeAddReference(object, MarkupReferenceEventArgs)**    
-Allows cancellation of CSS/JS prior to reference inclusion. Set `e.Cancel` to true to cancel the inclusion.
-
-**MarkupEventManager.OnAfterFileRead(object, MarkupEventArgs)**    
-Allows modification of file content immediately after being read. The content will be in `e.Bytes` and can be modified in place.
-
-`e.Encoding` will have an encoding derived from the byte order mark to enable you to get text content via `Encoding.GetString()` and write back to a byte array.
-
-Note, however, that `e.Encoding` needs to be used in conjunction with the filename. If the encoding cannot be determined (if the file is an image, for example), `Encoding.ASCII` will be returned _as a default_.
-
-Be sure to check the filename to determine what content you might be dealing with and _do not assume that `Encoding.ASCII` means the content is from a text file_.
+Allows cancellation of CSS/JS prior to reference inclusion. Set `e.Cancel` to true to cancel the inclusion. This can be useful if you want your references somewhere other than the default location -- in the event handler, just cancel the inclusion and handle them however you like.
 
 ## Status
 

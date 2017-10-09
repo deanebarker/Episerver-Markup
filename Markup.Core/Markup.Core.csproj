@@ -60,20 +60,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Markup\MarkupExtensionMethods.cs" />
     <Compile Include="Markup\Cache\CacheManager.cs" />
+    <Compile Include="Markup\Controllers\MarkupBlockController.cs" />
     <Compile Include="Markup\Controllers\MarkupFileArchiveController.cs" />
     <Compile Include="Markup\Controllers\MarkupFileController.cs" />
     <Compile Include="Markup\Events\MarkupEventArgs.cs" />
     <Compile Include="Markup\MarkupResourceHandler.cs" />
-    <Compile Include="Markup\MarkupFileReader.cs" />
     <Compile Include="Markup\MarkupInit.cs" />
     <Compile Include="Markup\Events\MarkupEventManager.cs" />
+    <Compile Include="Markup\MarkupResourceManager.cs" />
     <Compile Include="Markup\MarkupSettings.cs" />
-    <Compile Include="Markup\Models\MarkupArchiveFile.cs" />
-    <Compile Include="Markup\Controllers\MarkupControllerBase.cs" />
-    <Compile Include="Markup\Models\MarkupFile.cs" />
+    <Compile Include="Markup\Models\Blocks\MarkupBlock.cs" />
+    <Compile Include="Markup\Models\IMarkupContent.cs" />
+    <Compile Include="Markup\Models\Media\MarkupArchiveFile.cs" />
+    <Compile Include="Markup\Models\Media\MarkupFile.cs" />
     <Compile Include="Markup\Events\MarkupReferenceEventArgs.cs" />
-    <Compile Include="Markup\UI\CodeEditorDescriptor.cs" />
+    <Compile Include="Markup\UI\SimpleCodeEditorDescriptor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
