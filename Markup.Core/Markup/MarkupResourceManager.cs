@@ -89,13 +89,13 @@ namespace Markup
 
         private static string ResolveReferencePath(IContent content, string path)
         {
-            if(path.StartsWith("http"))
+            if (path.StartsWith("http"))
             {
                 // This would be an absolute URL
                 return path;
             }
 
-            if(path.StartsWith("/"))
+            if (path.StartsWith("/"))
             {
                 // This would be a relative URL to this same site (which is legal, though...rare?)
                 return path;

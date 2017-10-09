@@ -6,7 +6,6 @@ using EPiServer.Framework.Blobs;
 using EPiServer.Framework.DataAnnotations;
 using EPiServer.ServiceLocation;
 using Markup.Core.Markup.UI;
-using Markup.Events;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;

@@ -34,7 +34,7 @@ namespace Markup.Events
         public static string OutputMarkup(IMarkupContent content)
         {
             var filename = ((IContent)content).Name;
-            if(String.IsNullOrWhiteSpace(Path.GetExtension(filename)))
+            if (String.IsNullOrWhiteSpace(Path.GetExtension(filename)))
             {
                 filename = string.Concat(filename, ".html");
             }

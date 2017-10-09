@@ -1,5 +1,4 @@
-﻿using EPiServer.Core;
-using EPiServer.Web.Mvc;
+﻿using EPiServer.Web.Mvc;
 using Markup.Events;
 using Markup.Models.Blocks;
 using System.Web.Mvc;

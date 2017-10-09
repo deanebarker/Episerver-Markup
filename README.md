@@ -32,10 +32,10 @@ Raw CSS to be output to the page on which the content is placed. This will be ad
 Raw Javascript to be output to the page on which the content is placed. This will be added via `ClientResources.RequireScriptInline()`. Available in Edit Mode.
 
 **string StylesheetReferences**    
-URLs of stylesheets to be including on the page via a `LINK` tag (one URL per line). These will be added via to `ClientResources.RequireStyle()`. Available in Edit Mode.
+URLs of stylesheets to be referenced via a `LINK` tag (one URL per line). These will be added via to `ClientResources.RequireStyle()`. Available in Edit Mode.
 
 **string ScriptReferences**    
-URLs of script files to be including on the page via a `SCRIPT` tag (one URL per line). These will be added via `ClientResources.RequireScript().AtFooter()`. Available in Edit Mode.
+URLs of script files to be referenced via a `SCRIPT` tag (one URL per line). These will be added via `ClientResources.RequireScript().AtFooter()`. Available in Edit Mode.
 
 By default, the Alloy demo site places references --
 
@@ -50,7 +50,7 @@ Managed references (meaning references that map to content objects), will be rou
 
 The resource handler reads the specified content object and extracts and returns the resource contents.
 
-All of the properties above use an instance of the "Poor Man's Code Editor" for their UI editing component.
+All of the properties above use an instance of the "Poor Man's Code Editor" for their UI editing component (when/if available in Edit Mode).
 
 https://gist.github.com/deanebarker/f1c2542b3a510eb992c76c7e07c2f16b
 
@@ -64,7 +64,7 @@ Mapped to the `.html` and `.htm` extensions by default. Represents an HTML file.
 
 The markup is the content of the file itself.
 
-All files in the same asset folder as the Markup File will be evaluated as a resource. Anything with a `.js` or `.css` extensions will be added as references. (Clearly, put a `MarkupFile` in its own asset folder, unless more than one file should share the same script and style resources.)
+All files in the same asset folder as the file will be evaluated as a resource. Anything with `.js` or `.css` extensions will be added as references. (Clearly, put isolate your `MarkupFile` in its own asset folder, unless more than one file should share the same script and style resources.)
 
 ### MediaData: Markup Archive File
 
@@ -74,7 +74,7 @@ The markup is an HTML file in the _root_ of the archive with the same base name 
 
 Any `.js` and `.css` files in the _root_ of this archive will be added as references.
 
-Note the emphasis on _root_. This means you can't zip a directory because when those files will be in the directory in the root. On Windows, this means you highlight a group of files (_not_ a directory), then select `Send To...Compressed (zipped) folder`.
+Note the emphasis on _root_. This means you can't zip a directory because those files will be _in the directory_ in the root of the archive. On Windows, this means you highlight a group of files (_not_ their directory) and select `Send To...Compressed (zipped) folder`.
 
 A video of the Markup Archive File in action is available here:
 

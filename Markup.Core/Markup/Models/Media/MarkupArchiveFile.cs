@@ -2,7 +2,6 @@
 using EPiServer.DataAnnotations;
 using EPiServer.Framework.Blobs;
 using EPiServer.Framework.DataAnnotations;
-using Markup.Events;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
