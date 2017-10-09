@@ -2,30 +2,45 @@
 
 A library to assist working with "hand-coded" markup in Episerver CMS.
 
+## Summary
+
 It provides three content types:
 
 * Markup Block
 * Markup File
 * Markup Archive File
 
-Content representing hand-coded markup can be dragged into a content area where it will output to the page along with associated "resources", meaning inline or referenced scripts and styles.
+Content based on these types represents hand-coded markup and required style and script resources (hereafter generically referred to as "resources"). This content can be dragged into a content area where it will output to the page (the "Base Markup") and output CSS and/or JavaScript in `STYLE` or `SCRIPT` tags ("Inline Resources"), or output `LINK` or `SCRIPT` tags to reference off-page styles and/or scripts, which can be served from the Episerver site itself ("Local Resources"), or located elsewhere ("Remote Resources").
 
 Markup can be either manually added in Edit Mode (through a `MarkupBlock`) or added via file upload (`MarkupFile` or `MarkupArchiveFile`).
 
 >Note: this code will not compile without adding local references to `Episerver.dll`, `Episerver.Data.dll`, `Episerver.Shell`, and `Episerver.Framework.dll`. This code has been compiled against v10.10.3 of those assemblies.
 
-Each content type logically consists of four basic elements:
+## The Four Elements of Markup
+
+Adding raw markup to a page can logically result in the output of four things:
 
 * **Base Markup.** This is the markup that is output to the page.
-* **Inline Scripts/Styles.** This is inline Javascript and CSS that is directly output to the page.
+* **Inline Resources.** This is inline Javascript and CSS that is directly output to the page.
 * **Local Resources.** These are Javascript and CSS files associated with attached to the content (through various methods, described below) that are referenced through `LINK` and `SCRIPT` tags.
 * **Remote Resource URLs.** These are URLs to off-site Javascript and CSS that are referenced through `LINK` and `SCRIPT` tags. (i.e. -- jQuery, Bootstrap, etc.)
 
-Base Markup, Inline Scripts, and Inline Styles are always output to the page. Local and Remote Resources are evaluated for reference inclusion.
+Base Markup will always be output. The other three may or may not be output.
 
-(To clarify: a _resource_ is the file itself, a _reference_ is the tag that invokes that file. So, a CSS file is a _resource_. The `LINK` tag that loads that file for a page is a _reference_.)
+>Example: an SVG graphic requires nothing but a snippet of XML (the Base Markup).
 
-References to Local Resources are placed using the `ClientResources` helper class.
+>Example: a client-app written in Vue.js requires a snippet of HTML (the Base Markup), a line of JavaScript to activate the application on page load (an Inline Script Resource), the remote Vue.js client library (a Remote Script Resource), and a stylesheet written for this specific application (a Local Resource).
+
+Base Markup and Inline Resources are always output to the page. Local and Remote Resources are evaluated for reference inclusion.
+
+(To clarify: a _resource_ is the content itself, a _reference_ is the tag that refers to that content. So, a managed CSS file is a _resource_. The `LINK` tag that loads that file is a _reference_.)
+
+## Resource Placement
+
+References to Resources are placed using the `ClientResources` helper class.
+
+* Inline Resources using `ClientResources.RequireStyleInline()` and `ClientResources.RequireScriptInline()`
+* Local and Remote Resources using `ClientResources.RequireStyle()` and `ClientResources.RequireScript().AtFooter()`
 
 By default, the Alloy demo site places these references --
 
@@ -34,47 +49,22 @@ By default, the Alloy demo site places these references --
 
 Your templating may vary. See the `OnBeforeAddReference` event below for how to override reference placement.
 
-Managed resources (meaning references that map to resources associated with content objects), will be routed through a resource handler class. By default, this path is:
+Local Resources will be routed through a resource handler class. By default, this path is:
 
     /markup.resource?id=[ID of the content]&file=[name of the file]
 
 The resource handler reads the specified content object and extracts and returns the resource contents.
 
-All of the properties above use an instance of the "Poor Man's Code Editor" for their UI editing component (when/if available in Edit Mode).
-
-https://gist.github.com/deanebarker/f1c2542b3a510eb992c76c7e07c2f16b
-
 ## Content Types
 
-There are three content types -- a block, and two media items. All implement the `IMarkupContent` interface.
+There are three content types -- a block, and two media items.
 
-### Interface: IMarkupContent
+Of the four elements listed above, Inline Resources and Remote Resources are handled the same in all three content types:
 
-The `IMarkupContent` interface provides for the following. Items marked "implementation-specific" are explained in the individual content type descriptions below.
+* Inline Resources are directly entered in two properties: `InlineStyles` and `InlineScript`.
+* Remote Resource URLs are directly entered in two properties: `StylesheetReferences` and `ScriptReferences`, one URL per line.
 
-**string Markup**    
-_Implementation-specific._ The actual Base Markup to be output. 
-
-**string InlineStyles**   
-Raw CSS to be output to the page on which the content is placed. This will be added via `ClientResources.RequireStyleInline()`. Available in Edit Mode.
-
-**string InlineScript**   
-Raw Javascript to be output to the page on which the content is placed. This will be added via `ClientResources.RequireScriptInline()`. Available in Edit Mode.
-
-**string StylesheetReferences**    
-URLs of stylesheets to be referenced via a `LINK` tag (one URL per line). These will be added via to `ClientResources.RequireStyle()`. Available in Edit Mode.
-
-**string ScriptReferences**    
-URLs of script files to be referenced via a `SCRIPT` tag (one URL per line). These will be added via `ClientResources.RequireScript().AtFooter()`. Available in Edit Mode.
-
-**string GetTextOfResource(string token)**  
-_Implementation-specific._ Gets the text of the resource referenced by the filename. In most all cases, this is just a wrapper for `GetBytesOfResource()`.
-
-**string GetTextOfResource(string token)**  
-_Implementation-specific._ Gets an array of bytes for the resource referenced by the filename.
-
-**IEnumerable<string> GetResources()**   
-_Implementation-specific._ Gets a list of available resource names.
+Each content type handles sources its Base Markup and Local Resources through implementation-specific methods:
 
 ### BlockData: Markup Block
 
@@ -86,7 +76,7 @@ _Implementation-specific._ Gets a list of available resource names.
 Mapped to the `.html` and `.htm` extensions by default. Represents a single HTML file.
 
 * Base Markup is the content of the file itself.
-* Local Resources are files in _the same asset folder as the Markup File_, and will be evaluated and referenced as with Markup Block. (Clearly, isolate your Markup File in its own asset folder, unless more than one file should share the same local resources).
+* Local Resources are files in _the same asset folder as the Markup File_, and will be evaluated and referenced as with Markup Block. (Clearly, isolate your Markup File in its own asset folder, unless more than one file should share the same Local Resources).
 
 ### MediaData: Markup Archive File
 
@@ -100,6 +90,12 @@ Note the emphasis on _root_. This means you can't zip a directory because those 
 A video of the Markup Archive File in action is available here:
 
 https://vimeo.com/236467181
+
+## Poor Man's Code Editor
+
+All properties in Edit Mode use an instance of the "Poor Man's Code Editor" for their UI editing component (when/if available in Edit Mode). This provides a textarea with several behaviors optimized for code editing.
+
+https://gist.github.com/deanebarker/f1c2542b3a510eb992c76c7e07c2f16b
 
 ## Available Events
 
