@@ -9,7 +9,6 @@ using System.Text.RegularExpressions;
 namespace Markup.Core.Markup.UI
 {
     [EditorDescriptorRegistration(TargetType = typeof(String), UIHint = "SimpleCode")]
-    [EditorDescriptorRegistration(TargetType = typeof(String), UIHint = "SimpleCodeSmall")]
     public class SimpleCodeEditorDescriptor : EditorDescriptor
     {
         public SimpleCodeEditorDescriptor()
@@ -19,30 +18,14 @@ namespace Markup.Core.Markup.UI
 
         public override void ModifyMetadata(ExtendedMetadata metadata, IEnumerable<Attribute> attributes)
         {
-            dynamic contentMetadata = metadata;
-            var ownerContent = contentMetadata.OwnerContent;
-            var settings = GetSettings(ownerContent, metadata.PropertyName);
+            var settings = metadata.Attributes.OfType<SimpleCodeEditorSettingsAttribute>().FirstOrDefault() ?? new SimpleCodeEditorSettingsAttribute();
 
-            base.ModifyMetadata(metadata, attributes);
             SetEditorAttribute(metadata, "style", string.Format(style, settings.MinHeight, settings.MaxHeight));
             SetEditorAttribute(metadata, "spellcheck", spellcheck);
             SetEditorAttribute(metadata, "onkeydown", string.Format(onKeyDown, settings.TabReplacement));
-            SetEditorAttribute(metadata, "oninput", onInput);
             SetEditorAttribute(metadata, "onkeyup", onKeyUp);
-        }
 
-        private SimpleCodeEditorSettingsAttribute GetSettings(IContent content, string propertyName)
-        {
-            // There HAS to be a better way of doing this...
-            var type = content.GetType();
-            if (type.Name.EndsWith("Proxy"))
-            {
-                type = type.BaseType;
-            }
-
-            var property = type.GetProperty(propertyName);
-            var attribute = property.GetCustomAttributes(typeof(SimpleCodeEditorSettingsAttribute), true).FirstOrDefault();
-            return (SimpleCodeEditorSettingsAttribute)attribute ?? new SimpleCodeEditorSettingsAttribute();
+            base.ModifyMetadata(metadata, attributes);
         }
 
         private void SetEditorAttribute(ExtendedMetadata metadata, string attributeName, string value)
@@ -72,6 +55,7 @@ namespace Markup.Core.Markup.UI
 
         private string style = @"
             position: relative;
+            width: 582px;
 			min-height: {0}px;
 			max-height: {1}px;
             font-family: monospace;
@@ -82,6 +66,7 @@ namespace Markup.Core.Markup.UI
             background-color: rgb(250,250,250);
 			white-space: pre;";
 
+        // Catches tabs and inserts spaces
         private string onKeyDown = @"
             var tabReplacement = '{0}';
             var keyCode = event.keyCode || event.which;
@@ -93,6 +78,7 @@ namespace Markup.Core.Markup.UI
                 this.selectionEnd = start + tabReplacement.length;
             }}";
 
+        // Indents lines based on the previous line's indent level
         private string onKeyUp = @"
 			var keyCode = event.keyCode || event.which;
 			if(keyCode == 13)
@@ -109,14 +95,6 @@ namespace Markup.Core.Markup.UI
                 this.value = this.value.substring(0, start) + leadingSpaces + this.value.substring(end);
                 this.selectionEnd = start + leadingSpaces.length;
 			}";
-
-        private string onInput = @"
-			var maxHeight = this.style.maxHeight.replace('px','');
-            var minHeight = this.style.minHeight.replace('px','');
-			var newHeight = Math.max(this.scrollHeight, minHeight);
-			newHeight = Math.min(newHeight, maxHeight);
-            this.style.height = newHeight + 'px';
-            ";
     }
 
     public class SimpleCodeEditorSettingsAttribute : Attribute
