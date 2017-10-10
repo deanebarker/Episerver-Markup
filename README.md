@@ -22,16 +22,18 @@ Markup can be either manually added in Edit Mode (through a `MarkupBlock`) or ad
 
 Adding raw markup to a page can logically result in the output of four things:
 
-1. **Base Markup.** This is the markup that is output to the page -- usually always HTML, but can technically be any text.
-2. **Inline Resources.** This is inline Javascript and CSS that is directly output to the page.
-3. **Local Resources.** These are Javascript and CSS files managed in the Episerver site and associated the content (through various methods, described below) that are referenced through `LINK` and `SCRIPT` tags.
-4. **Remote Resource URLs.** These are URLs to off-site Javascript and CSS that are referenced through `LINK` and `SCRIPT` tags.
+1. **Base Markup.** This is the markup that is output to the page where the content is placed -- usually HTML, but can be any text.
+2. **Inline Resources (Script or Style).** This is inline Javascript and CSS that is directly output to the page.
+3. **Local Resources (Script or Style).** These are Javascript and CSS files managed in the Episerver site and associated the content (through various methods, described below) that are referenced through `LINK` and `SCRIPT` tags.
+4. **Remote Resource URLs (Script or Style).** These are URLs to off-site Javascript and CSS that are referenced through `LINK` and `SCRIPT` tags.
 
 Base Markup will always be output wherever the content is placed. The other three elements may or may not be output, depending on need.
 
->**Example:** an SVG graphic requires nothing but a snippet of XML (the Base Markup).
+>**Example:**    
+An SVG graphic requires nothing but a snippet of XML (the Base Markup).
 
->**Example:** a client-app written in Vue.js requires a snippet of HTML (the Base Markup), a line of JavaScript to activate the application on page load (an Inline Script Resource), the remote Vue.js client library (a Remote Script Resource), and a stylesheet written for this specific application (a Local Resource).
+>**Example:**    
+A client-app written in Vue.js requires a snippet of HTML (the Base Markup), a line of JavaScript to activate the application on page load (an Inline Script Resource), the remote Vue.js client library (a Remote Script Resource), and a stylesheet written for this specific application (a Local Resource).
 
 Base Markup and Inline Resources are always output to the page. Local and Remote Resources are evaluated for reference inclusion.
 
