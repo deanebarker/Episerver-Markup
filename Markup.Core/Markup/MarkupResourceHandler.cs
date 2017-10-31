@@ -36,7 +36,7 @@ namespace Markup
 
             // Get the bytes of the requested resource
             var data = ((IMarkupContent)content).GetBytesOfResource(file);
-            if (data == null)
+            if (data == null && data.Length == 0)
             {
                 // That file didn't exist
                 throw NotFound();
