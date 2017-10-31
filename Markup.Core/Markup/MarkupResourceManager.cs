@@ -84,7 +84,7 @@ namespace Markup
                 return;
             }
             script = MarkupEventManager.OutputScript(script, null, content);
-            ClientResources.RequireScriptInline(script);
+            ClientResources.RequireScriptInline(script).AtFooter();
         }
 
         private static string ResolveReferencePath(IContent content, string path)
