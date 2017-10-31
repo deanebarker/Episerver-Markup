@@ -108,7 +108,7 @@ namespace Markup
                     Path = MarkupSettings.ResourceHandlerUrl
                 };
                 var query = HttpUtility.ParseQueryString(builder.Query);
-                query[MarkupSettings.HandlerArgs.Content] = content.ContentLink.ID.ToString();
+                query[MarkupSettings.HandlerArgs.Content] = string.Concat(content.ContentLink.ID.ToString(), "_", content.ContentLink.WorkID.ToString());
                 query[MarkupSettings.HandlerArgs.File] = path;
                 builder.Query = query.ToString();
 
