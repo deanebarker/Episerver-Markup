@@ -1,6 +1,6 @@
 # Episerver Markup
 
-A library to assist working with "hand-coded" markup in Episerver CMS.
+A library to assist working with hand-coded markup in Episerver CMS. The goal is to allow front-end developers to deploy HTML/CSS/JS code as content, and have that code "bootstrap" itself by managing all necessary references to supporting JS and CSS files.
 
 ## Summary
 
